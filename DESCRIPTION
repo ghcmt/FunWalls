@@ -1,0 +1,24 @@
+Package: FunWalls
+Type: Package
+Title: Useful Functions for Daily Work at Grifols
+Version: 0.1.0
+Author: 
+    person("Carlos", "Martínez Torró", , "carlos.martinez@grifols.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-3529-3355"))
+Maintainer: Carlos Martínez Torró <carlos.martinez@grifols.com>
+Description: 
+    This package contains several functions that speed up routine processes at
+    Grifols R&D. At this moment, it contains three functions: two of them focused
+    on summarizing the results of a Mixed Model of Repeated Measures (sigTables
+    and mmrmTables) and the other is dedicated to calculating baseline levels
+    for each biomarker (basals.R). This package will grow in the future with the
+    addition of new functions. 
+Imports:
+    kableExtra,
+    tidyverse,
+    writexl
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
