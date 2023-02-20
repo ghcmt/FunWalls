@@ -28,13 +28,13 @@ sigTables <- function(toptable, sigs, estimate, pval, adj) {
     df <- toptable %>%
       summarize(significance = sig,
                 up = sum(toptable[estimate] > 0
-                         & toptable[pval] < sig),
+                         & toptable[pval] < sig, na.rm = TRUE),
                 upAdj = sum(toptable[estimate] > 0
-                         & toptable[adj] < sig),
+                         & toptable[adj] < sig, na.rm = TRUE),
                 dw = sum(toptable[estimate] < 0
-                         & toptable[pval] < sig),
+                         & toptable[pval] < sig, na.rm = TRUE),
                 dwAdj = sum(toptable[estimate] < 0
-                         & toptable[adj] < sig))
+                         & toptable[adj] < sig, na.rm = TRUE))
 
     # We transform the tibble to dataframe to operate with the rows:
     df <- as.data.frame(df)
@@ -48,11 +48,10 @@ sigTables <- function(toptable, sigs, estimate, pval, adj) {
     sigTable <- kable(fdf, row.names = F,
                       col.names = c("Significance level", "P.value",
                                     "Adj. P. Value", "P.value", "Adj. P. Value"),
-                      caption = "Most significally changed metabolites after the treatment in Visit 2") %>%
+                      caption = "Significantly changed metabolites") %>%
       kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = TRUE, position = "center") %>%
       add_header_above(c("", "Up-regulated" = 2, "Down-regulated" = 2))
 
   # And we return the final dataframe:
   return(sigTable)
 }
-
