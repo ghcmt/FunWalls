@@ -17,6 +17,7 @@
 #' @param bioCols Range of columns that contain the biomarkers (e.g., 5:500).
 #' @return A kable-formatted table with the number of significant biomarkers by sig. level.
 #' @importFrom dplyr summarize
+#' @import kableExtra
 #' @export
 
 sigTables <- function(toptable, sigs, estimate, pval, adj) {

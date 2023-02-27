@@ -19,8 +19,8 @@
 #' @param estimateVal Absolute estimate value threshold for up or down-regulation.
 #' @param adjVal Adjusted p-value threshold.
 #' @importFrom ggvenn ggvenn
-#' @importFrom ggplot2 ggplot
 #' @importFrom dplyr filter
+#' @import ggplot2
 #' @import kableExtra
 #' @export
 

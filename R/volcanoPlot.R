@@ -19,8 +19,8 @@
 #' @param estimateVal Absolute estimate value threshold for up or down-regulation.
 #' @param adjVal Adjusted p-value threshold.
 #' @return An interactive ggplotly object with the Volcano plot.
-#' @importFrom ggplot2 ggplot
 #' @importFrom dplyr mutate
+#' @import ggplot2
 #' @export
 
 
