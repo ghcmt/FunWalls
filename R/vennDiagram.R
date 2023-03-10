@@ -60,31 +60,49 @@ vennDiagram <- function(endtable1, endtable2, estimate1, estimate2, adj1,
   dif2 <- setdiff(up2[[biomarker]], up1[[biomarker]])
   common <- intersect(up1[[biomarker]], up2[[biomarker]])
 
+  # We create the tables taking into account the possibility that we have no
+  # metabolites for a specific condition:
+  if(length(dif1) > 0) {
+    venn_dw_1 <- endtable1[dif1, ]
+    cat("\n \n")
+    print(kable(venn_dw_1, row.names = F,
+                caption = "Unique upregulated metabolites of first top-table") %>%
+            kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                          full_width = TRUE, position = "center"))
+    cat("\n \n")
+  } else {
+    cat("\n \n")
+    cat("There are no unique differentially upregulated metabolites for the first top-table.")
+    cat("\n \n")
+  }
 
-  # And we create the tables:
-  venn_up_1 <- endtable1[dif1, ]
-  cat("\n \n")
-  print(kable(venn_up_1, row.names = F,
-        caption = "Upregulated metabolites of first top-table") %>%
-    kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
-                  full_width = TRUE, position = "center"))
-  cat("\n \n")
+  if(length(dif2) > 0) {
+    venn_up_2 <- endtable2[dif2, ]
+    cat("\n \n")
+    print(kable(venn_up_2, row.names = F,
+                caption = "Unique upregulated metabolites of second top-table") %>%
+            kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                          full_width = TRUE, position = "center"))
+    cat("\n \n")
+  } else {
+    cat("\n \n")
+    cat("There are no unique differentially upregulated metabolites for the second top-table.")
+    cat("\n \n")
+  }
 
-  venn_up_2 <- endtable2[dif2, ]
-  cat("\n \n")
-  print(kable(venn_up_2, row.names = F,
-        caption = "Upregulated metabolites of second top-table") %>%
-    kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
-                  full_width = TRUE, position = "center"))
-  cat("\n \n")
-
-  venn_up_com <- endtable1[common, ]
-  cat("\n \n")
-  print(kable(venn_up_com, row.names = F,
-        caption = "Common upregulated metabolites between the two top-tables") %>%
-    kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
-                  full_width = TRUE, position = "center"))
-  cat("\n \n")
+  if(length(common) > 0) {
+    venn_up_com <- endtable1[common, ]
+    cat("\n \n")
+    print(kable(venn_up_com, row.names = F,
+                caption = "Common upregulated metabolites between the two top-tables") %>%
+            kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                          full_width = TRUE, position = "center"))
+    cat("\n \n")
+  } else {
+    cat("\n \n")
+    cat("There are no upregulated metabolites in common for the two top-tables.")
+    cat("\n \n")
+  }
 
   # Now, for downregulated metabolites:
   vlistdw <- list(first_dw = down1[[biomarker]], second_dw = down2[[biomarker]])
@@ -107,29 +125,46 @@ vennDiagram <- function(endtable1, endtable2, estimate1, estimate2, adj1,
   dif2 <- setdiff(down2[[biomarker]], down1[[biomarker]])
   common <- intersect(down1[[biomarker]], down2[[biomarker]])
 
-  # And we create the tables:
-  venn_dw_1 <- endtable1[dif1, ]
-  cat("\n \n")
-  print(kable(venn_dw_1, row.names = F,
-        caption = "Downregulated metabolites of first top-table") %>%
-    kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
-                  full_width = TRUE, position = "center"))
-  cat("\n \n")
+  if(length(dif1) > 0) {
+    venn_dw_1 <- endtable1[dif1, ]
+    cat("\n \n")
+    print(kable(venn_dw_1, row.names = F,
+          caption = "Downregulated metabolites of first top-table") %>%
+      kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                    full_width = TRUE, position = "center"))
+    cat("\n \n")
+  } else {
+    cat("\n \n")
+    cat("There are no unique differentially downregulated metabolites for the first top-table.")
+    cat("\n \n")
+  }
 
-  venn_up_2 <- endtable2[dif2, ]
-  cat("\n \n")
-  print(kable(venn_up_2, row.names = F,
-        caption = "Downregulated metabolites of second top-table") %>%
-    kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
-                  full_width = TRUE, position = "center"))
-  cat("\n \n")
+  if(length(dif2) > 0) {
+    venn_up_2 <- endtable2[dif2, ]
+    cat("\n \n")
+    print(kable(venn_up_2, row.names = F,
+          caption = "Downregulated metabolites of second top-table") %>%
+      kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                    full_width = TRUE, position = "center"))
+    cat("\n \n")
+  } else {
+    cat("\n \n")
+    cat("There are no unique differentially downregulated metabolites for the second top-table.")
+    cat("\n \n")
+  }
 
-  venn_up_com <- endtable1[common, ]
+  if(length(common) > 0) {
+    venn_up_com <- endtable1[common, ]
+    cat("\n \n")
+    print(kable(venn_up_com, row.names = F,
+          caption = "Common downregulated metabolites between the two top-tables") %>%
+      kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                    full_width = TRUE, position = "center"))
   cat("\n \n")
-  print(kable(venn_up_com, row.names = F,
-        caption = "Common downregulated metabolites between the two top-tables") %>%
-    kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
-                  full_width = TRUE, position = "center"))
-  cat("\n \n")
+  } else {
+    cat("\n \n")
+    cat("There are no downregulated metabolites in common for the two top-tables.")
+    cat("\n \n")
+  }
 
 }

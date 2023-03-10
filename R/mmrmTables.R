@@ -19,7 +19,7 @@
 #' @export
 
 
-mmrmTable <- function(model, df, bioCols, excel = NULL) {
+mmrmTable <- function(model, df, bioCols, visits, excel = NULL) {
   # First, we create a dataframe with the provided model:
   data2table <- as.data.frame(do.call(rbind, model))
 
@@ -27,7 +27,9 @@ mmrmTable <- function(model, df, bioCols, excel = NULL) {
   data2table$Biomarker <- colnames(df)[bioCols]
 
   # Then, we do the same with the visit:
-  data2table$Covar <- rep(c("Pre_vs_Post"), length(bioCols))
+  data2table$Covar <- rep(visits, each = length(bioCols))
+
+  View(data2table)
 
   # And pivot from long to wide:
   end.table <- pivot_wider(data = data2table,
@@ -36,7 +38,7 @@ mmrmTable <- function(model, df, bioCols, excel = NULL) {
                            values_from = c("Estimate", "Pr...t.."))
 
   # Next, we adjust the p-value with the Benjamini-Hochberg Procedure:
-  end.table$Adjp <- p.adjust(end.table$Pr...t.._Pre_vs_Post, method = "BH")
+  end.table$Adjp <- p.adjust(end.table[2], method = "BH")
 
   # Now we can change the name of the columns:
   colnames(end.table) <- c("Biomarker", "Estimate", "p.Value", "Adj.p.Value")
@@ -100,3 +102,7 @@ mmrmTable <- function(model, df, bioCols, excel = NULL) {
 
 
 }
+
+#firstmb[1]
+#lastmb[1]
+#mmrmTable(model = run.model, df = dfpos, visits = c("V2", "V3"), bioCols = firstmb[1]:lastmb[1])

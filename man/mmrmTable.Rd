@@ -4,7 +4,7 @@
 \alias{mmrmTable}
 \title{MMRM Table}
 \usage{
-mmrmTable(model, df, bioCols, excel = NULL)
+mmrmTable(model, df, bioCols, visits, excel = NULL)
 }
 \arguments{
 \item{model}{MMRM model that we have generated before}
