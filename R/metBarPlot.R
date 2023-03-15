@@ -104,11 +104,16 @@ metBarPlot <- function(toptable, class, estimate, adj, sigs) {
       geom_text(aes(label = ifelse(n > 0, n, NA)), position = position_stack(vjust = 0.5), size = 3.3) +
       ggtitle("Percentage (and n) of biomarker classes depending on significance") +
       theme(axis.text.x = element_text(angle = 45,  size = 12, hjust = 1, vjust = 1),
-            panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-            panel.background = element_blank(), axis.line = element_line(colour = "black"),
-            legend.position = "bottom", legend.title = element_blank()) +
+            panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank(),
+            panel.background = element_blank(),
+            axis.line = element_line(colour = "black"),
+            legend.position = "bottom",
+            legend.title = element_blank()) +
       scale_fill_manual(values = c("#00b8a9", "#ff6b6b")) +
-      facet_wrap(~significance, nrow = 2, labeller = as_labeller(sig_labels))
+      facet_wrap(~significance,
+                 nrow = length(unique_levels),
+                 labeller = as_labeller(sig_labels))
 
     # Finally, we return the plot:
     return(p)

@@ -1,7 +1,7 @@
 Package: funWalls
 Type: Package
 Title: Useful Functions for Daily Work at Grifols
-Version: 0.8
+Version: 0.8.1
 Author: 
     person("Carlos", "Martínez Torró", , "carlos.martinez@grifols.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-3529-3355"))
