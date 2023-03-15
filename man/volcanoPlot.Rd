@@ -12,7 +12,8 @@ volcanoPlot(
   biomarker,
   estimateVal,
   adjVal,
-  class = NULL
+  class = NULL,
+  caption = NULL
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ volcanoPlot(
 \item{adjVal}{Adjusted p-value threshold.}
 
 \item{class}{Name of the "class" column in the top-table (NULL by default).}
+
+\item{caption}{Title for the plot (NULL by default)}
 }
 \value{
 An interactive ggplotly object with the Volcano plot.
@@ -40,14 +43,16 @@ This function will generate a Volcano plot from a provided top table. It will
 highlight the differentially expressed biomarkers that are down or up-regulated.
 The user can provide the estimate threshold from which a biomarker will be
 up or down-regulated, as well as the desired adjusted p-value threshold.
-The function has eight arguments: the top-table with the data, the name
+The function has nine arguments: the top-table with the data, the name
 of the estimate column in that top-table, the name of the p-value and adjusted p-value
 columns in the top-table, the name of the Biomarker column (i.e., the column that
 contains the name or identification of each biomarker) and then the desired
-thresholds for the estimate and adjusted p-value. Finally, includes an
+thresholds for the estimate and adjusted p-value. It also includes an
 additional argument called "class" that it allows the user to color the
 differentially expressed biomarkers depending on their class by providing
-the "Class" column of the toptable (by default it is NULL). It returns an interactive
+the "Class" column of the toptable (by default it is NULL). Finally, it has
+a "caption" argument to add the desired title to the plot.
+It returns an interactive
 ggplotly object that allows the user to focus on the relevant biomarkers,
 as the basic information of the highlighted biomarkers will be displayed on mouseover.
 }

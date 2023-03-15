@@ -1,35 +1,40 @@
 #' MMRM Table
 #'
 #' This function will create a Kable-formatted table with the most relevant
-#' biomarkers in a given model. It has four arguments: a model that has to be
-#' provided; a dataframe in which we have the data that we used to run the model;
-#' the range of columns in which we have the biomarker information; and an 'excel'
-#' argument that expects the name of the desired file and which is null by default
-#' (i.e., it will not create an Excel file with the information of the table
-#' if we don't specify it).
+#' biomarkers in a given model for each visit. It has eight arguments: a model
+#' that has to be provided; a dataframe in which we have the data that we used
+#' to run the model; the range of columns in which we have the biomarker
+#' information; and an 'excel'argument that expects the name of the desired file
+#' and which is null by default (i.e., it will not create an Excel file with the
+#' information of the table if we don't specify it). Essential to run it
+#' with "results = 'asis'", as it contains Kable tables.
 #'
 #' @param model MMRM model that we have generated before
 #' @param df The dataframe that we used to create the model.
 #' @param bioCols Range of columns that contain the biomarkers (e.g., 5:500).
-#' @param excel Name of the Excel file which will contain the table data. Default NULL.
-#' @return A Kable-formatted table with the relevant information of the model.
+#' @param visits Vector with the visits to be analyzed.
+#' @param excel Name of the desired Excel file for the output. Without ".xlsx".
+#' @param classFile Name and path of the Excel file (with .xlsx) with class
+#' information for the biomarkers.
+#' @param classBio Name of the Biomarker column in the class file.
+#' @param classGroup Name of the desired Group column in the class file.
 #' @importFrom dplyr arrange
 #' @importFrom tidyr pivot_wider
-#' @import kableExtra writexl
+#' @import kableExtra writexl readxl
+#' @return A toptable with all the relevant information.
 #' @export
 
 
-mmrmTable <- function(model, df, bioCols, visits, excel = NULL) {
-  # First, we create a dataframe with the provided model:
-  data2table <- as.data.frame(do.call(rbind, model))
+mmrmTable <- function(model, df, bioCols, visits, excel = NULL, classFile = NULL,
+                      classBio = NULL, classGroup = NULL) {
+  # Dataframe with all the selected elements:
+  data2table <- as.data.frame(do.call(rbind, run.model))
 
-  # We add the biomarkers into a new column:
-  data2table$Biomarker <- colnames(df)[bioCols]
+  # We add the metabolites into a new column:
+  data2table$Biomarker <- rep(colnames(df)[bioCols], each = length(visits))
 
-  # Then, we do the same with the visit:
-  data2table$Covar <- rep(visits, each = length(bioCols))
-
-  View(data2table)
+  #Then, we do the same with the visits:
+  data2table$Covar <- rep(visits, lastmb[1] - firstmb[1] + 1)
 
   # And pivot from long to wide:
   end.table <- pivot_wider(data = data2table,
@@ -37,72 +42,82 @@ mmrmTable <- function(model, df, bioCols, visits, excel = NULL) {
                            names_from = Covar,
                            values_from = c("Estimate", "Pr...t.."))
 
-  # Next, we adjust the p-value with the Benjamini-Hochberg Procedure:
-  end.table$Adjp <- p.adjust(end.table[2], method = "BH")
+  for(visit in visits) {
+    name_raw <- paste0("Pr...t.._", visit)
+    name_adj <- paste0("Adj.p.Value_", visit)
+    end.table[name_adj] <- p.adjust(end.table[[name_raw]], method = "BH")
+    end.table <- end.table |>
+      relocate(all_of(c(name_raw, name_adj)), .after = paste0("Estimate_", visit))
+  }
+
 
   # Now we can change the name of the columns:
-  colnames(end.table) <- c("Biomarker", "Estimate", "p.Value", "Adj.p.Value")
-  end.table <- end.table[, c("Biomarker", "Estimate", "p.Value", "Adj.p.Value")]
+  names(end.table) <- sub("Pr...t..", "p.Value", colnames(end.table))
 
-  # We save the table in a new dataframe:
+  # And we change the rownames to the Biomarker:
   end.table <- as.data.frame(end.table)
   rownames(end.table) <- end.table$Biomarker
 
-  # We order by the adjusted p-value:
-  end.table <- end.table %>% arrange(Adj.p.Value)
+  # If we want Class information, we merge our dataframe with the Class dataframe:
+  if(!is.null(classFile)) {
+    # We read the file:
+    bioclass <- read_xlsx(path = classFile)
 
-  # And we save to a new Excel file if desired:
-  if (!is.null(excel)) {
-    write_xlsx(end.table, path = excel)
+    # We get the relevant information:
+    bioclass <- bioclass |>
+      rename(Biomarker = all_of(classBio),
+             Class = all_of(classGroup)) |>
+      select(Biomarker, Class)
+
+    # And we merge the two dataframes:
+    end.table <- left_join(end.table, bioclass)
   }
 
-  # Next, we calculate the number of rows with Adjusted and Raw p-values under
-  # the standard significance threshold of 0.05:
-  adjRows <- sum(end.table$Adj.p.Value < 0.05)
-  pvalRows <- sum(end.table$Adj.p.Value < 0.05)
+  # Finally, we generate the tables for each Visit:
+  for(visit in visits) {
+    name_raw <- paste0("p.Value_", visit)
+    name_adj <- paste0("Adj.p.Value_", visit)
 
-  # We color the rows with significant differences. We use if-else to determine
-  # the number of rows to be colored, due to the fact that if we don't account
-  # for this number, we might encounter a subscript error when we try to
-  # show only the first rows of the table:
-  if(adjRows > 1 & adjRows < 10) {
-    color.me <- which(end.table$Adj.p.Value < 0.05)[1:adjRows]
-  } else {
-    color.me <- which(end.table$Adj.p.Value < 0.05)[1:10]
-  }
+    # We arrange the table to order it by ascending adjusted p-value for that visit:
+    end.table <- end.table |>
+      arrange(.data[[name_adj]], .data[[name_raw]])
 
-  # We do the same thing with the raw p-values:
-  if (pvalRows > 1 & pvalRows < 10) {
-    color.me2 <- which(end.table$p.Value < 0.05)[1:pvalRows]
-  } else {
-    color.me2 <- which(end.table$p.Value < 0.05)[1:10]
-  }
 
-    # And then we format the table depending on the number of significant values:
-  if (adjRows != 0 & pvalRows != 0) {
-    tab <- kable(end.table[1:10, ], row.names = FALSE) %>%
+    if (!is.null(excel)) {
+      # We check if the "results" folder already exists; if not, we create it:
+      ifelse(!dir.exists("results/"), dir.create("results/"), FALSE)
+
+      # And we store the results in there:
+      write_xlsx(end.table, path = paste0("results/", excel, visit, ".xlsx"))
+    }
+
+    # Now, we prepare the data for the table:
+    color_raw <- which(end.table[name_raw] < 0.05)
+    color_adj <- which(end.table[name_adj] < 0.05)
+
+    # As we will only show the first ten rows, we discard indexes beyond that:
+    color_raw <- color_raw[color_raw <= 10]
+    color_adj <- color_adj[color_adj <= 10]
+
+    # And we configure the table:
+    t <- kable(end.table[1:10, ], row.names = F, caption = paste0("Most significally changed metabolites after the treatment in ", visit, ".")) %>%
       kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = TRUE, position = "center") %>%
-      row_spec(color.me2, bold = TRUE, color = "orange") %>%
-      row_spec(color.me, bold = TRUE, color = "red") %>%
-      footnote(general = "Ordered by the adjusted p-value.")
-  } else if (adjRows == 0 & pvalRows != 0) {
-    tab <- kable(end.table[1:10, ], row.names = FALSE) %>%
-      kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = TRUE, position = "center") %>%
-      row_spec(color.me2, bold = TRUE, color = "orange") %>%
-      footnote(general = "Ordered by the adjusted p-value.")
-  } else {
-    tab <- kable(end.table[1:10, ], row.names = FALSE) %>%
-      kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = TRUE, position = "center") %>%
-      footnote(general = "Ordered by the adjusted p-value.")
+      row_spec(color_raw, bold = TRUE, color = "orange") %>%
+      row_spec(color_adj, bold = TRUE, color = "red") %>%
+      footnote(paste0("Ordered by ascendent adjusted p-value of ", visit, "."))
+    cat("\n \n")
+    cat(paste0("The following table shows the 10 most significantly changed metabolites in ", visit, ". Full table can be found in the `", excel, visit, ".xlsx` file at the `Results` folder."))
+    cat("\n \n")
+
+
+    # Finally, we print the final table:
+    print(t)
+
+    # And we change the rownames to the Biomarker for future analysis:
+    end.table <- as.data.frame(end.table)
+    rownames(end.table) <- end.table$Biomarker
   }
 
-  # Finally, we return the Kable-formatted table with the relevant information
-  # of the model:
-  return(tab)
-
-
+  return(end.table)
 }
 
-#firstmb[1]
-#lastmb[1]
-#mmrmTable(model = run.model, df = dfpos, visits = c("V2", "V3"), bioCols = firstmb[1]:lastmb[1])

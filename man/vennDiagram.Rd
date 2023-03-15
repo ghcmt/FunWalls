@@ -13,7 +13,8 @@ vennDiagram(
   adj2,
   biomarker,
   estimateVal,
-  adjVal
+  adjVal,
+  excel
 )
 }
 \arguments{
@@ -34,13 +35,18 @@ vennDiagram(
 \item{estimateVal}{Absolute estimate value threshold for up or down-regulation.}
 
 \item{adjVal}{Adjusted p-value threshold.}
+
+\item{excel}{Name of the Excel file to store results if tables are large (without .xlsx)}
 }
 \description{
 This function creates a Venn Diagram to compare two top-tables. It also
 generates a table with the shared biomarkers between the two top tables,
 as well as two tables for the unique biomarkers of each top-tables. IT IS
 ESSENTIAL TO RUN THE CHUNK WITH 'results = "asis"' IN ORDER TO VIEW THE
-KABLE TABLES. It has nine arguments: the two top-tables that are going to
+KABLE TABLES. It has ten arguments: the two top-tables that are going to
 be compared, the name of the estimate, adjusted P-value and biomarker
-columns and, finally, the desired estimate and adjusted P-value thresholds.
+columns and, also, the desired estimate and adjusted P-value thresholds.
+Finally, it also has an 'excel' argument to save those tables that are
+too large to print. This argument has to be filled without ".xlsx" and has
+to provide some information about the top-tables (e.g., "Gender" or "MMSE").
 }

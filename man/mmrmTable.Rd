@@ -4,7 +4,16 @@
 \alias{mmrmTable}
 \title{MMRM Table}
 \usage{
-mmrmTable(model, df, bioCols, visits, excel = NULL)
+mmrmTable(
+  model,
+  df,
+  bioCols,
+  visits,
+  excel = NULL,
+  classFile = NULL,
+  classBio = NULL,
+  classGroup = NULL
+)
 }
 \arguments{
 \item{model}{MMRM model that we have generated before}
@@ -13,17 +22,27 @@ mmrmTable(model, df, bioCols, visits, excel = NULL)
 
 \item{bioCols}{Range of columns that contain the biomarkers (e.g., 5:500).}
 
-\item{excel}{Name of the Excel file which will contain the table data. Default NULL.}
+\item{visits}{Vector with the visits to be analyzed.}
+
+\item{excel}{Name of the desired Excel file for the output. Without ".xlsx".}
+
+\item{classFile}{Name and path of the Excel file (with .xlsx) with class
+information for the biomarkers.}
+
+\item{classBio}{Name of the Biomarker column in the class file.}
+
+\item{classGroup}{Name of the desired Group column in the class file.}
 }
 \value{
-A Kable-formatted table with the relevant information of the model.
+A toptable with all the relevant information.
 }
 \description{
 This function will create a Kable-formatted table with the most relevant
-biomarkers in a given model. It has four arguments: a model that has to be
-provided; a dataframe in which we have the data that we used to run the model;
-the range of columns in which we have the biomarker information; and an 'excel'
-argument that expects the name of the desired file and which is null by default
-(i.e., it will not create an Excel file with the information of the table
-if we don't specify it).
+biomarkers in a given model for each visit. It has eight arguments: a model
+that has to be provided; a dataframe in which we have the data that we used
+to run the model; the range of columns in which we have the biomarker
+information; and an 'excel'argument that expects the name of the desired file
+and which is null by default (i.e., it will not create an Excel file with the
+information of the table if we don't specify it). Essential to run it
+with "results = 'asis'", as it contains Kable tables.
 }
