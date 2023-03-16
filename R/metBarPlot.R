@@ -16,6 +16,8 @@
 #' @param estimate Name of the 'estimate' column in the top table.
 #' @param adj Name of the 'adjusted p-value' column in the top table.
 #' @param sigs Vector with the desired adjusted p-values thresholds.
+#' @param title Title of the bar plot (NULL by default)
+#' @param subt Subtitle of the bar plot (NULL by default)
 #' @return A bar plot with the percentage of biomarkers up-regulated or down-
 #' regulated depending on the significance level.
 #' @importFrom tidyr pivot_wider
@@ -24,8 +26,8 @@
 #' @export
 
 
-
-metBarPlot <- function(toptable, class, estimate, adj, sigs) {
+metBarPlot <- function(toptable, class, estimate, adj, sigs, title = NULL,
+                       subt = NULL) {
   # We create a dataframe to store all the information:
   fdf <- data.frame()
 
@@ -73,11 +75,7 @@ metBarPlot <- function(toptable, class, estimate, adj, sigs) {
   # significance thresholds, we start to prepare the information for the
   # final table:
   if(nrow(fdf) != 0) {
-    # First, we get how many significance levels are in our final dataframe:
-    sigdf <- unique(fdf$significance)
-
-    # We do the same thing with the "diff" column to see if there are
-    # downregulated and/or upregulated biomarkers:
+    # We look for the presence of downregulated and upregulated biomarkers:
     regdf <- unique(fdf$diff)
 
     # We reorder the vector to make sure that the order is the same than
@@ -87,7 +85,7 @@ metBarPlot <- function(toptable, class, estimate, adj, sigs) {
     # Now, we use complete to add rows with n = 0 if there are not upregulated
     # or downregulated biomarkers at a given significance level:
     fdf <- fdf %>%
-      group_by(significance, Class, total_count) %>%
+      group_by(significance, .data[[class]], total_count) %>%
       complete(diff = distinct(., diff)$diff, fill = list(n = 0)) |>
       mutate(percent = ifelse(is.na(percent), 0, percent))
 
@@ -98,22 +96,49 @@ metBarPlot <- function(toptable, class, estimate, adj, sigs) {
     names(sig_labels) <- unique_levels
 
     # And we generate the plot:
-    p <- ggplot(fdf, aes(x = Class, y = percent, fill = diff)) +
-      geom_bar(stat="identity", size = 0.5, color = "black") +
-      ylab("Percentage (%)") +
-      geom_text(aes(label = ifelse(n > 0, n, NA)), position = position_stack(vjust = 0.5), size = 3.3) +
-      ggtitle("Percentage (and n) of biomarker classes depending on significance") +
-      theme(axis.text.x = element_text(angle = 45,  size = 12, hjust = 1, vjust = 1),
-            panel.grid.major = element_blank(),
-            panel.grid.minor = element_blank(),
-            panel.background = element_blank(),
-            axis.line = element_line(colour = "black"),
-            legend.position = "bottom",
-            legend.title = element_blank()) +
-      scale_fill_manual(values = c("#00b8a9", "#ff6b6b")) +
-      facet_wrap(~significance,
-                 nrow = length(unique_levels),
-                 labeller = as_labeller(sig_labels))
+    if(length(unique_levels) > 1) {
+      p <- ggplot(fdf, aes(x = .data[[class]], y = percent, fill = diff)) +
+        geom_bar(stat="identity", size = 1, color = "black") +
+        ylab("Percentage (%)") +
+        geom_text(aes(label = ifelse(n > 0, n, NA)), position = position_stack(vjust = 0.5), size = 3.3) +
+        ggtitle(label = title,
+                subtitle = subt) +
+        theme(axis.text.x = element_text(angle = 45,  size = 11, hjust = 1, vjust = 1),
+              axis.text.y = element_text(size = 11),
+              axis.title.x = element_blank(),
+              axis.title.y = element_text(vjust = 3, size = 11),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank(),
+              panel.background = element_blank(),
+              axis.line = element_line(colour = "black"),
+              legend.position = "bottom",
+              legend.text=element_text(size = 11),
+              legend.title = element_blank()) +
+        scale_fill_manual(values = c("#00b8a9", "#ff6b6b")) +
+        facet_wrap(~significance,
+                   nrow = length(unique_levels),
+                   labeller = as_labeller(sig_labels))
+
+    } else {
+      p <- ggplot(fdf, aes(x = .data[[class]], y = percent, fill = diff)) +
+        geom_bar(stat="identity", size = 1, color = "black") +
+        ylab("Percentage (%)") +
+        geom_text(aes(label = ifelse(n > 0, n, NA)), position = position_stack(vjust = 0.5), size = 3.3) +
+        ggtitle(label = title,
+                subtitle = subt) +
+        theme(axis.text.x = element_text(angle = 45,  size = 11, hjust = 1, vjust = 1),
+              axis.text.y = element_text(size = 11),
+              axis.title.x = element_blank(),
+              axis.title.y = element_text(vjust = 3, size = 11),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank(),
+              panel.background = element_blank(),
+              axis.line = element_line(colour = "black"),
+              legend.position = "bottom",
+              legend.text=element_text(size = 11),
+              legend.title = element_blank()) +
+        scale_fill_manual(values = c("#00b8a9", "#ff6b6b"))
+    }
 
     # Finally, we return the plot:
     return(p)

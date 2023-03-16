@@ -88,6 +88,7 @@ vennDiagram <- function(endtable1, endtable2, estimate1, estimate2, adj1,
                           full_width = TRUE, position = "center"))
     cat("\n \n")
     cat(paste0("Full table can be found in the file `", excel, "_upregulated_table1.xlsx` at the `results` folder"))
+    cat("\n \n")
   } else {
     cat("\n \n")
     cat("There are no unique differentially upregulated metabolites for the first top-table.")
@@ -112,6 +113,7 @@ vennDiagram <- function(endtable1, endtable2, estimate1, estimate2, adj1,
                           full_width = TRUE, position = "center"))
     cat("\n \n")
     cat(paste0("Full table can be found in the file `", excel, "_upregulated_table2.xlsx` at the `results` folder"))
+    cat("\n \n")
   }
   else {
     cat("\n \n")
@@ -137,6 +139,7 @@ vennDiagram <- function(endtable1, endtable2, estimate1, estimate2, adj1,
                           full_width = TRUE, position = "center"))
     cat("\n \n")
     cat(paste0("Full table can be found in the file `", excel, "_upregulated_common.xlsx` at the `results` folder"))
+    cat("\n \n")
   } else {
     cat("\n \n")
     cat("There are no upregulated metabolites in common for the two top-tables.")
@@ -182,6 +185,7 @@ vennDiagram <- function(endtable1, endtable2, estimate1, estimate2, adj1,
                           full_width = TRUE, position = "center"))
     cat("\n \n")
     cat(paste0("Full table can be found in the file `", excel, "_downregulated_table1.xlsx` at the `results` folder"))
+    cat("\n \n")
   } else {
     cat("\n \n")
     cat("There are no unique differentially downregulated metabolites for the first top-table.")
@@ -206,6 +210,7 @@ vennDiagram <- function(endtable1, endtable2, estimate1, estimate2, adj1,
                           full_width = TRUE, position = "center"))
     cat("\n \n")
     cat(paste0("Full table can be found in the file `", excel, "_downregulated_table2.xlsx` at the `results` folder"))
+    cat("\n \n")
   }
   else {
     cat("\n \n")
@@ -231,6 +236,7 @@ vennDiagram <- function(endtable1, endtable2, estimate1, estimate2, adj1,
                           full_width = TRUE, position = "center"))
     cat("\n \n")
     cat(paste0("Full table can be found in the file `", excel, "_downregulated_common.xlsx` at the `results` folder"))
+    cat("\n \n")
   } else {
     cat("\n \n")
     cat("There are no downregulated metabolites in common for the two top-tables.")

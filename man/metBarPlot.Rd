@@ -4,7 +4,7 @@
 \alias{metBarPlot}
 \title{Bar Plot of Metabolite Class by Significance}
 \usage{
-metBarPlot(toptable, class, estimate, adj, sigs)
+metBarPlot(toptable, class, estimate, adj, sigs, title = NULL, subt = NULL)
 }
 \arguments{
 \item{toptable}{The top table with the necessary information.}
@@ -16,6 +16,10 @@ metBarPlot(toptable, class, estimate, adj, sigs)
 \item{adj}{Name of the 'adjusted p-value' column in the top table.}
 
 \item{sigs}{Vector with the desired adjusted p-values thresholds.}
+
+\item{title}{Title of the bar plot (NULL by default)}
+
+\item{subt}{Subtitle of the bar plot (NULL by default)}
 }
 \value{
 A bar plot with the percentage of biomarkers up-regulated or down-
