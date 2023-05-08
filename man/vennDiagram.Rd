@@ -5,48 +5,48 @@
 \title{Venn diagrams}
 \usage{
 vennDiagram(
-  endtable1,
-  endtable2,
-  estimate1,
-  estimate2,
-  adj1,
-  adj2,
+  endtables,
+  estimate,
+  adj,
   biomarker,
   estimateVal,
   adjVal,
-  excel
+  excel,
+  set_names = NULL
 )
 }
 \arguments{
-\item{endtable1}{The first top-table.}
+\item{endtables}{List of top-tables. If there is only one top-table, the input
+should be "list(toptable)".}
 
-\item{endtable2}{The second top-table.}
+\item{estimate}{Vector with the names of the "estimate" column in the top-tables.
+There is no need for a vector if the name is shared between top-tables.}
 
-\item{estimate1}{Name of the "estimate" column in the first top-table.}
+\item{adj}{Vector with the names of the "adjusted p-value" column in the top-tables.
+There is no need for a vector if the name is shared between top-tables.}
 
-\item{estimate2}{Name of the "estimate" column in the second top-table.}
-
-\item{adj1}{Name of the "adjusted p-value" column in the first top-table.}
-
-\item{adj2}{Name of the "adjusted p-value" column in the second top-table.}
-
-\item{biomarker}{Name of the "biomarker" column in both top-tables.}
+\item{biomarker}{Name of the "biomarker" column in the top-tables.}
 
 \item{estimateVal}{Absolute estimate value threshold for up or down-regulation.}
 
 \item{adjVal}{Adjusted p-value threshold.}
 
 \item{excel}{Name of the Excel file to store results if tables are large (without .xlsx)}
+
+\item{set_names}{Vector with the desired names for the top-tables
+(i.e., c("Top1", "Top2", "Top3"))}
 }
 \description{
-This function creates a Venn Diagram to compare two top-tables. It also
-generates a table with the shared biomarkers between the two top tables,
-as well as two tables for the unique biomarkers of each top-tables. IT IS
+This function creates a Venn Diagram to compare two or more top-tables. It also
+generates a table with the shared biomarkers between the top tables,
+as well as tables for the unique biomarkers of each of the top-tables. IT IS
 ESSENTIAL TO RUN THE CHUNK WITH 'results = "asis"' IN ORDER TO VIEW THE
-KABLE TABLES. It has ten arguments: the two top-tables that are going to
-be compared, the name of the estimate, adjusted P-value and biomarker
-columns and, also, the desired estimate and adjusted P-value thresholds.
-Finally, it also has an 'excel' argument to save those tables that are
-too large to print. This argument has to be filled without ".xlsx" and has
-to provide some information about the top-tables (e.g., "Gender" or "MMSE").
+KABLE TABLES. It has eight arguments: the list of top-tables that are going to
+be compared, a vector with the names of the "estimate" and "adjusted P-value"
+columns, the name of the biomarker column and, also, the desired estimate and
+adjusted P-value thresholds. In addition, it also has an 'excel' argument to
+save those tables that are too large to print. This argument has to be filled
+without ".xlsx" and has to provide some information about the top-tables
+(e.g., "Gender" or "MMSE"). Finally, it has a set_names argument to provide
+the desired names for each of the top-tables (NULL by default)
 }

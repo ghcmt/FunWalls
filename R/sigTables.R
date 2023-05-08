@@ -15,12 +15,13 @@
 #' @param adj Name of the 'adjusted p-value' column in the top table.
 #' @param visit0 The name of the first visit (which contains baseline info) (e.g., "Visit 0").
 #' @param bioCols Range of columns that contain the biomarkers (e.g., 5:500).
+#' @param PDF Set to TRUE if the Tables are going to be exported to a PDF (FALSE by default).
 #' @return A kable-formatted table with the number of significant biomarkers by sig. level.
 #' @importFrom dplyr summarize
 #' @import kableExtra
 #' @export
 
-sigTables <- function(toptable, sigs, estimate, pval, adj) {
+sigTables <- function(toptable, sigs, estimate, pval, adj, PDF = FALSE) {
   # We create a dataframe to store all the information:
   fdf <- data.frame()
 
@@ -45,13 +46,23 @@ sigTables <- function(toptable, sigs, estimate, pval, adj) {
 
   }
 
-  # Now, we format the table:
+  # We format the table depending on the "PDF" argument:
+  if (!isTRUE(PDF)){
     sigTable <- kable(fdf, row.names = F,
                       col.names = c("Significance level", "P.value",
                                     "Adj. P. Value", "P.value", "Adj. P. Value"),
                       caption = "Significantly changed metabolites") %>%
       kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = TRUE, position = "center") %>%
       add_header_above(c("", "Up-regulated" = 2, "Down-regulated" = 2))
+  } else {
+    sigTable <- kable(fdf, row.names = F,
+                      col.names = c("Significance level", "P.value",
+                                    "Adj. P. Value", "P.value", "Adj. P. Value"),
+                      caption = "$Significantly changed metabolites$") %>%
+      kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = TRUE, position = "center") %>%
+      add_header_above(c("", "Up-regulated" = 2, "Down-regulated" = 2))
+  }
+
 
   # And we return the final dataframe:
   return(sigTable)

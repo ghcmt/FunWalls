@@ -4,7 +4,7 @@
 \alias{sigTables}
 \title{Table of Significant Biomarkers}
 \usage{
-sigTables(toptable, sigs, estimate, pval, adj)
+sigTables(toptable, sigs, estimate, pval, adj, PDF = FALSE)
 }
 \arguments{
 \item{toptable}{The top table with the necessary information.}
@@ -16,6 +16,8 @@ sigTables(toptable, sigs, estimate, pval, adj)
 \item{pval}{Name of the 'raw p-value' column in the top table.}
 
 \item{adj}{Name of the 'adjusted p-value' column in the top table.}
+
+\item{PDF}{Set to TRUE if the Tables are going to be exported to a PDF (FALSE by default).}
 
 \item{visit0}{The name of the first visit (which contains baseline info) (e.g., "Visit 0").}
 

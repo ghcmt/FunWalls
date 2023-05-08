@@ -4,12 +4,15 @@
 \alias{corrMap}
 \title{Correlation Maps}
 \usage{
-corrMap(df, sig = NULL)
+corrMap(df, sig = NULL, type = NULL)
 }
 \arguments{
 \item{df}{A provided dataframe.}
 
 \item{sig}{Significance threshold (e.g., 0.05). Null by default.}
+
+\item{type}{Type of correlation. It accepts "pearson" or "spearman".
+NULL by default ("pearson").}
 }
 \value{
 A correlation plot.

@@ -12,7 +12,9 @@ mmrmTable(
   excel = NULL,
   classFile = NULL,
   classBio = NULL,
-  classGroup = NULL
+  classGroup = NULL,
+  PDF = FALSE,
+  biomarkerColName = NULL
 )
 }
 \arguments{
@@ -32,6 +34,11 @@ information for the biomarkers.}
 \item{classBio}{Name of the Biomarker column in the class file.}
 
 \item{classGroup}{Name of the desired Group column in the class file.}
+
+\item{PDF}{Set to TRUE if the Tables are going to be exported to a PDF (FALSE by default).}
+
+\item{biomarkerColName}{Desired name of the biomarker column in the top-table
+(if NULL it will be "Biomarker").}
 }
 \value{
 A toptable with all the relevant information.

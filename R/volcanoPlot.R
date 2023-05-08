@@ -26,6 +26,7 @@
 #' @param adjVal Adjusted p-value threshold.
 #' @param class Name of the "class" column in the top-table (NULL by default).
 #' @param caption Title for the plot (NULL by default)
+#' @param PDF Set to TRUE if the Tables are going to be exported to a PDF (FALSE by default).
 #' @return An interactive ggplotly object with the Volcano plot.
 #' @importFrom dplyr mutate
 #' @import ggplot2
@@ -33,7 +34,7 @@
 
 
 volcanoPlot <- function(endtable, estimate, pval, adj, biomarker, estimateVal,
-                        adjVal, class = NULL, caption = NULL) {
+                        adjVal, class = NULL, caption = NULL, PDF = FALSE) {
   # We create a general label for all metabolites:
   endtable$diffexpressed <- "NO"
 
@@ -53,7 +54,7 @@ volcanoPlot <- function(endtable, estimate, pval, adj, biomarker, estimateVal,
   # the biomarker. This would be useful for the interactive plot:
   endtable <- endtable %>% mutate(
     biomarker = case_when(
-      diffexpressed != "NO" ~ Biomarker))
+      diffexpressed != "NO" ~ biomarker))
 
   if(!is.null(class)) {
     mycolors <- rainbow(length(unique(endtable[[class]])))
@@ -87,6 +88,10 @@ volcanoPlot <- function(endtable, estimate, pval, adj, biomarker, estimateVal,
       labs(x = "Estimate")
   }
 
+  if(!isTRUE(PDF)) {
+    vplot <- ggplotly(vplot)
+  }
+
   # And we return the plotly object:
-  return(ggplotly(vplot))
+  return(vplot)
 }

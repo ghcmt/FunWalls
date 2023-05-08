@@ -13,7 +13,8 @@ volcanoPlot(
   estimateVal,
   adjVal,
   class = NULL,
-  caption = NULL
+  caption = NULL,
+  PDF = FALSE
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ volcanoPlot(
 \item{class}{Name of the "class" column in the top-table (NULL by default).}
 
 \item{caption}{Title for the plot (NULL by default)}
+
+\item{PDF}{Set to TRUE if the Tables are going to be exported to a PDF (FALSE by default).}
 }
 \value{
 An interactive ggplotly object with the Volcano plot.

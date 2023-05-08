@@ -10,6 +10,8 @@
 #'
 #' @param df A provided dataframe.
 #' @param sig Significance threshold (e.g., 0.05). Null by default.
+#' @param type Type of correlation. It accepts "pearson" or "spearman".
+#' NULL by default ("pearson").
 #' @importFrom Hmisc rcorr
 #' @importFrom dplyr select
 #' @import corrplot
@@ -17,25 +19,26 @@
 #' @export
 
 
-corrMap <- function(df, sig = NULL) {
+corrMap <- function(df, sig = NULL, type = NULL) {
   # First, we only select the numerical variables, as the function won't
   # work with categorical variables:
   corrdf <- df |> select(where(is.numeric))
 
   # Now, we create the correlation matrix:
-  corr <- rcorr(as.matrix(corrdf))
+  corr <- rcorr(as.matrix(corrdf), type = type)
 
   # We calculate the signifance matrix with a set confidence level of 0.95:
   p.mat <- cor.mtest(corrdf, conf.level = 0.95)
 
   # And we plot the correlation matrix with our desired parameters:
-  p <- corrplot(corr$r, p.mat = p.mat$p, col = rev(col(50)), cl.pos = "b",
+  p <- corrplot(corr$r, p.mat = p.mat$p, cl.pos = "b",
+                col = colorRampPalette(c("#2059d4","white","#de3018"))(20),
                 method = "color", number.cex = 0.8, diag = F,
                 insig = "blank", tl.col = "black", order = "hclust",
                 sig.level = sig, addrect = 1, rect.lwd = 1)$corrPos -> p1
   text(p1$x, p1$y, round(p1$corr, 2), cex = 0.75)
 
-  # Finally, we return the plot:
-  return(p)
+  # Finally, we return the first rows of the correlation:
+  return(head(p, 5))
 }
 

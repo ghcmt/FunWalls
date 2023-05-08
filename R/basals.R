@@ -20,21 +20,17 @@
 #' @export
 
 basals <- function(df, patientCol, visitCol, visit0, bioCols) {
-  # We pass to symbol the two columns provided, as it eases the evaluation
-  # with dplyr:
-  patientCol <- sym(patientCol)
-  visitCol <- sym(visitCol)
-
-  # Now we generate the dataframe with the baseline levels for each biomarker:
+  # We generate the dataframe with the baseline levels for each biomarker:
   df <- df %>%
     # We group by the patient column:
-    group_by(!!patientCol) %>%
+    group_by(.data[[patientCol]]) %>%
     # And we create a new column for each biomarker:
     mutate(across(
-      .cols = all_of(bioCols-1),
+      .cols = all_of(bioCols - 1),
       # If there is a visit0, we get that value; else, the patient will have
       # NA as the baseline level for that biomarker:
-      ~ifelse(visit0 %in% !!visitCol, .[!!visitCol == visit0], NA),
+      ~ifelse(visit0 %in% .data[[visitCol]], .[.data[[visitCol]] == visit0], NA),
+
       # We add the label "_basal" to the name of the column:
       .names = "{.col}_basal"))
 

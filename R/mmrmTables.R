@@ -18,6 +18,9 @@
 #' information for the biomarkers.
 #' @param classBio Name of the Biomarker column in the class file.
 #' @param classGroup Name of the desired Group column in the class file.
+#' @param PDF Set to TRUE if the Tables are going to be exported to a PDF (FALSE by default).
+#' @param biomarkerColName Desired name of the biomarker column in the top-table
+#' (if NULL it will be "Biomarker").
 #' @importFrom dplyr arrange
 #' @importFrom tidyr pivot_wider
 #' @import kableExtra writexl readxl
@@ -26,7 +29,7 @@
 
 
 mmrmTable <- function(model, df, bioCols, visits, excel = NULL, classFile = NULL,
-                      classBio = NULL, classGroup = NULL) {
+                      classBio = NULL, classGroup = NULL, PDF = FALSE, biomarkerColName = NULL) {
   # Dataframe with all the selected elements:
   data2table <- as.data.frame(do.call(rbind, run.model))
 
@@ -73,6 +76,12 @@ mmrmTable <- function(model, df, bioCols, visits, excel = NULL, classFile = NULL
     end.table <- left_join(end.table, bioclass)
   }
 
+  # We change the name of the first column if desired:
+  if (!is.null(biomarkerColName)) {
+    end.table <- end.table |>
+      rename(!!biomarkerColName := Biomarker)
+  }
+
   # Finally, we generate the tables for each Visit:
   for(visit in visits) {
     name_raw <- paste0("p.Value_", visit)
@@ -81,7 +90,6 @@ mmrmTable <- function(model, df, bioCols, visits, excel = NULL, classFile = NULL
     # We arrange the table to order it by ascending adjusted p-value for that visit:
     end.table <- end.table |>
       arrange(.data[[name_adj]], .data[[name_raw]])
-
 
     if (!is.null(excel)) {
       # We check if the "results" folder already exists; if not, we create it:
@@ -99,12 +107,21 @@ mmrmTable <- function(model, df, bioCols, visits, excel = NULL, classFile = NULL
     color_raw <- color_raw[color_raw <= 10]
     color_adj <- color_adj[color_adj <= 10]
 
-    # And we configure the table:
-    t <- kable(end.table[1:10, ], row.names = F, caption = paste0("Most significally changed metabolites after the treatment in ", visit, ".")) %>%
-      kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = TRUE, position = "center") %>%
-      row_spec(color_raw, bold = TRUE, color = "orange") %>%
-      row_spec(color_adj, bold = TRUE, color = "red") %>%
-      footnote(paste0("Ordered by ascendent adjusted p-value of ", visit, "."))
+    # And we configure the table depending on the PDF argument:
+    if (!isTRUE(PDF)) {
+      t <- kable(end.table[1:10, ], row.names = F, caption = paste0("Most significally changed metabolites after the treatment in ", visit, ".")) %>%
+        kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = TRUE, position = "center") %>%
+        row_spec(color_raw, bold = TRUE, color = "orange") %>%
+        row_spec(color_adj, bold = TRUE, color = "red") %>%
+        footnote(paste0("Ordered by ascendent adjusted p-value of ", visit, "."))
+    } else {
+      t <- kable(end.table[1:10, ], row.names = F, caption = paste0("$Most significally changed metabolites after the treatment in ", visit, ".$")) %>%
+        kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = TRUE, position = "center") %>%
+        row_spec(color_raw, bold = TRUE, color = "orange") %>%
+        row_spec(color_adj, bold = TRUE, color = "red") %>%
+        footnote(paste0("Ordered by ascendent adjusted p-value of ", visit, "."))
+    }
+
     cat("\n \n")
     cat(paste0("The following table shows the 10 most significantly changed metabolites in ", visit, ". Full table can be found in the `", excel, visit, ".xlsx` file at the `Results` folder."))
     cat("\n \n")
@@ -115,7 +132,12 @@ mmrmTable <- function(model, df, bioCols, visits, excel = NULL, classFile = NULL
 
     # And we change the rownames to the Biomarker for future analysis:
     end.table <- as.data.frame(end.table)
-    rownames(end.table) <- end.table$Biomarker
+    if (is.null(biomarkerColName)) {
+      rownames(end.table) <- end.table$Biomarker
+    } else {
+      rownames(end.table) <- end.table[[biomarkerColName]]
+    }
+
   }
 
   return(end.table)
